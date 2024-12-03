@@ -4,44 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Collaborative Text Editor</title>
-    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
+    <link rel="stylesheet" href="static/css/styles.css">
 </head>
 <body>
-    <div class="container">
-        <!-- File List Sidebar -->
-        <div class="sidebar">
-            <h2>Your Files</h2>
-            <div class="file-list" id="fileList">
-                <!-- Files will be added here dynamically -->
-            </div>
-            <button id="newFileBtn" class="new-file-btn">New File</button>
+    <header>
+        <div class="navbar-brand">Collaborative Text Editor</div>
+    </header>
+    <main>
+        <div id="editor-container"></div>
+        <div id="active-users">
+            <h3>Active Users</h3>
+            <div id="active-users-list"></div>
         </div>
-
-        <!-- Main Editor Area -->
-        <div class="editor-container">
-            <div class="editor-header">
-                <h1 id="currentFileName">Select a file to begin</h1>
-                <div class="connection-status" id="connectionStatus">
-                    Disconnected
-                </div>
-            </div>
-            
-            <div class="editor-wrapper">
-                <!-- Line numbers -->
-                <div class="line-numbers" id="lineNumbers"></div>
-                
-                <!-- Text editor -->
-                <div class="editor" id="editor" contenteditable="true"></div>
-                
-                <!-- Cursors container -->
-                <div class="cursors-container" id="cursorsContainer"></div>
-            </div>
-        </div>
-    </div>
-
-    <script src="js/fileManager.js"></script>
-    <script src="js/websocket.js"></script>
-    <script src="js/editor.js"></script>
+    </main>
+    <footer>
+        &copy; 2024 Collaborative Text Editor
+    </footer>
+    <script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
+    <script src="static/js/editor.js"></script>
 </body>
 </html>
-
