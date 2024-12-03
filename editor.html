@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+
+{% block extra_head %}
+<!-- Include Quill stylesheet -->
+<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid my-5">
+    <div class="row">
+        <!-- Editor Column -->
+        <div class="col-md-9">
+            <!-- Document Title and Action Buttons -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h4 contenteditable="true" id="document-title" class="mb-0">{{ document.title }}</h4>
+                <div>
+                    <!-- Save Button -->
+                    <button type="button" class="btn btn-primary" id="save-button">Save</button>
+                    <!-- Share Button -->
+                    <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#collaboratorsModal">
+                        Share
+                    </button>
+                </div>
+            </div>
+
+            <!-- Editor Container -->
+            <div id="editor-container"></div>
+
+            <!-- Active Users List -->
+            <div id="active-users" class="mt-4">
+                <h6>Active Users:</h6>
+                <div id="active-users-list" class="d-flex flex-wrap">
+                    <!-- Active users will be listed here -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Collaborators Modal -->
+<div class="modal fade" id="collaboratorsModal" tabindex="-1" aria-labelledby="collaboratorsModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form method="post" id="collaborators-form">
+          {% csrf_token %}
+          <input type="hidden" name="form_type" value="collaborators_form">
+          <div class="modal-header">
+            <h5 class="modal-title" id="collaboratorsModalLabel">Share Document</h5>
+          </div>
+          <div class="modal-body">
+            {{ collaborators_form.non_field_errors }}
+            {% for field in collaborators_form %}
+                <div class="form-group">
+                    {{ field.label_tag }}
+                    {{ field }}
+                    {% if field.help_text %}
+                        <small class="form-text text-muted">{{ field.help_text }}</small>
+                    {% endif %}
+                    {% for error in field.errors %}
+                        <div class="invalid-feedback">
+                            {{ error }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+            <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </form>
+      </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_script %}
+<!-- Include Quill library -->
+<script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+<!-- Include quill-cursors script -->
+<script src="https://cdn.jsdelivr.net/npm/quill-cursors@3.0.0/dist/quill-cursors.min.js"></script>
+
+<script>
+    // Register QuillCursors module
+    Quill.register('modules/cursors', window.QuillCursors);
+
+    // Initialize Quill editor with cursors module and toolbar enabled
+    const quill = new Quill('#editor-container', {
+        theme: 'snow',
+        modules: {
+            cursors: true,
+            toolbar: [
+                [{ 'font': [] }, { 'size': [] }],
+                ['bold', 'italic', 'underline', 'strike'],
+                [{ 'color': [] }, { 'background': [] }],
+                [{ 'script': 'super' }, { 'script': 'sub' }],
+                [{ 'header': '1' }, { 'header': '2' }, 'blockquote', 'code-block'],
+                [{ 'list': 'ordered' }, { 'list': 'bullet' }, { 'indent': '-1' }, { 'indent': '+1' }],
+                [{ 'direction': 'rtl' }, { 'align': [] }],
+                ['link', 'image', 'video', 'formula'],
+                ['clean']
+            ]
+        },
+        placeholder: "Start collaborating here..."
+    });
+
+    // WebSocket integration placeholder for real-time collaboration
+    const cursors = quill.getModule('cursors');
+    // TODO: Integrate WebSocket connection here to broadcast changes and cursor movements
+</script>
+{% endblock %}
