@@ -1,59 +1,27 @@
-class Editor {
-    constructor() {
-        this.editor = document.getElementById('editor');
-        this.setupEventListeners();
-    }
-
-    setupEventListeners() {
-        // Handle text input
-        this.editor.addEventListener('input', (e) => {
-            const selection = window.getSelection();
-            const position = selection.anchorOffset;
-            
-            // Send edit to WebSocket
-            wsHandler.sendEdit(position, e.data);
-        });
-
-        // Handle cursor movement
-        this.editor.addEventListener('mouseup', this.updateCursorPosition.bind(this));
-        this.editor.addEventListener('keyup', this.updateCursorPosition.bind(this));
-
-        // Handle line numbers
-        this.editor.addEventListener('input', this.updateLineNumbers.bind(this));
-        this.editor.addEventListener('scroll', this.synchronizeScroll.bind(this));
-    }
-
-    updateCursorPosition() {
-        const selection = window.getSelection();
-        if (!selection.rangeCount) return;
-
-        const range = selection.getRangeAt(0);
-        const rect = range.getBoundingClientRect();
-        const editorRect = this.editor.getBoundingClientRect();
-
-        const position = {
-            x: rect.left - editorRect.left,
-            y: rect.top - editorRect.top
-        };
-
-        wsHandler.sendCursorUpdate(position);
-    }
-
-    updateLineNumbers() {
-        const content = this.editor.innerText;
-        const lines = content.split('\n');
-        const lineNumbers = document.getElementById('lineNumbers');
-        
-        lineNumbers.innerHTML = lines
-            .map((_, index) => `<div>${index + 1}</div>`)
-            .join('');
-    }
-
-    synchronizeScroll() {
-        const lineNumbers = document.getElementById('lineNumbers');
-        lineNumbers.scrollTop = this.editor.scrollTop;
-    }
-}
-
-// Initialize editor
-const editor = new Editor();
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Collaborative Text Editor</title>
+    <link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
+    <link rel="stylesheet" href="static/css/styles.css">
+</head>
+<body>
+    <header>
+        <div class="navbar-brand">Collaborative Text Editor</div>
+    </header>
+    <main>
+        <div id="editor-container"></div>
+        <div id="active-users">
+            <h3>Active Users</h3>
+            <div id="active-users-list"></div>
+        </div>
+    </main>
+    <footer>
+        &copy; 2024 Collaborative Text Editor
+    </footer>
+    <script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
+    <script src="static/js/editor.js"></script>
+</body>
+</html>
